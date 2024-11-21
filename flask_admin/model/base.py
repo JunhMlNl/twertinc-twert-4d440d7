@@ -2068,6 +2068,7 @@ class BaseModelView(BaseView, ActionsMixin):
             extra_args=view_args.extra_args,
         )
 
+
     @expose('/new/', methods=('GET', 'POST'))
     def create_view(self):
         """
@@ -2161,10 +2162,10 @@ class BaseModelView(BaseView, ActionsMixin):
             template = self.edit_template
 
         return self.render(template,
-                           model=model,
-                           form=form,
-                           form_opts=form_opts,
-                           return_url=return_url)
+                        model=model,
+                        form=form,
+                        form_opts=form_opts,
+                        return_url=return_url)
 
     @expose('/details/')
     def details_view(self):

@@ -122,6 +122,7 @@ def update_process_list(dbsession):
         processExe = proc.exe()
         processID = proc.pid
         print(processExe , ' ::: ', processID)
+        #processes 테이블에 실행중인 프로세스 목록을 추가하거나 업데이트한다
         dbsession.execute("INSERT INTO processes (full_name,exe_name,running) VALUES (:full,:exe,True) ON CONFLICT (full_name) DO UPDATE SET running=True",{"full":processExe,"exe":processName})
     except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
         pass

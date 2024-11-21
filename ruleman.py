@@ -21,8 +21,8 @@ hosts_path = "C:\Windows\System32\drivers\etc\hosts"
 
 redirect = "127.0.0.1"
 website_list = [] # ["www.facebook.com","facebook.com",
-      # "dub119.mail.live.com","www.dub119.mail.live.com",
-      # "www.gmail.com","gmail.com"]
+    # "dub119.mail.live.com","www.dub119.mail.live.com",
+    # "www.gmail.com","gmail.com"]
 
 counter = 0
 
@@ -40,12 +40,13 @@ counter = 0
 #     website_list = domain_names.copy()
 #     print("update_rules(): ",threading.get_native_id(),time_start,time_end,exe_list,website_list)
 
+#시간 설정
 def checktime(name):
     db = sqlite3.connect('nblocker.sqlite3')
     cur = db.cursor()
     time_rules = cur.execute("SELECT  strftime('%H:%M',from_time),strftime('%H:%M',to_time) FROM time_rules")
     time_rules_rows = time_rules.fetchall()
-
+    
     time_starts = []
     time_ends = []
 
