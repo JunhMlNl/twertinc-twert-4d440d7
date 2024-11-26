@@ -110,9 +110,18 @@ def psutil_blockexe(): #block từ time_start -> time_end (2 cái này là strin
 def webblock():  
     db = sqlite3.connect('nblocker.sqlite3')
     cur = db.cursor()
-    domain_rules = cur.execute("SELECT  domain FROM domain_rules WHERE is_blocked=TRUE") 
+
+    # Query domain_rules and join with time_rules based on time_rule_name
+    domain_rules = cur.execute("""
+        SELECT domain_rules.domain 
+        FROM domain_rules 
+        JOIN time_rules ON domain_rules.time_rule_name = time_rules.name
+        WHERE domain_rules.is_blocked = TRUE
+          AND time_rules.from_time <= strftime('%H:%M', 'now', 'localtime')
+          AND time_rules.to_time >= strftime('%H:%M', 'now', 'localtime')
+    """)
     domain_rules_rows = domain_rules.fetchall()
-    
+
     website_list = []
 
     for row in domain_rules_rows:
@@ -121,19 +130,19 @@ def webblock():
             st = domain_name.find('www.')
             if domain_name.find('/', st + 4) != -1:
                 domain_name = domain_name[:domain_name.find('/', st + 4)]
-            website_list.append(domain_name[st + 4 : ])
-            website_list.append(domain_name[st :])
+            website_list.append(domain_name[st + 4:])
+            website_list.append(domain_name[st:])
         else:
             if 'http:' in domain_name:
                 st = 7
                 if domain_name.find('/', st) != -1:
-                    domain_name = domain_name[: domain_name.find('/', st) ]
+                    domain_name = domain_name[: domain_name.find('/', st)]
                 website_list.append(domain_name[st:])
                 website_list.append('www.' + domain_name[st:])
             elif 'https:' in domain_name:
                 st = 8
                 if domain_name.find('/', st) != -1:
-                    domain_name = domain_name[:domain_name.find('/', st) ]
+                    domain_name = domain_name[:domain_name.find('/', st)]
                 website_list.append(domain_name[st:])
                 website_list.append('www.' + domain_name[st:])
             else:
@@ -141,39 +150,35 @@ def webblock():
                     domain_name = domain_name[:domain_name.find('/')]
                 website_list.append(domain_name)
                 website_list.append('www.' + domain_name)
-        #website_list.append(row[0])
+
     db.commit()
     db.close()
 
-    if checktime("web"):
+    if website_list:  # Only block if there are domains to block
         with open(hosts_path, 'r+') as file:
-            content=file.readlines()
+            content = file.readlines()
             file.seek(0)
             for line in content:
                 if not (redirect in line):
                     file.write(line)
 
-            # removing hostnmes from host file
             file.truncate()
             for website in website_list:
                 if website in content:
                     pass
                 else:
-                    # mapping hostnames to your localhost IP address
                     file.write(redirect + " " + website + "\n")
         print(website_list)
-        print('bruh')
     else:
         with open(hosts_path, 'r+') as file:
-            content=file.readlines()
+            content = file.readlines()
             file.seek(0)
             for line in content:
                 if not (redirect in line):
                     file.write(line)
 
-            # removing hostnmes from host file
             file.truncate()
-        
+            
         print('fun')
 
 def thread_run(id):
