@@ -1,0 +1,10 @@
+{
+    "en": {
+        "dashboard": "Dashboard",
+        "about": "About"
+    },
+    "ko": {
+        "dashboard": "대시보드",
+        "about": "정보"
+    }
+}

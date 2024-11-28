@@ -2,6 +2,7 @@ from flask import Flask, request, url_for
 
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
+# from flask_babel import Babel
 
 from flask_autocrud import AutoCrud
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,7 @@ import time
 import datetime
 import os
 import sys
+import json
 
 
 def resource_path(relative_path):
@@ -191,12 +193,17 @@ def main():
       app = Flask(__name__)
       application_path = os.path.dirname(__file__)
       database_path = 'nblocker.sqlite3'
+      
+
     app.config['SECRET_KEY'] = 'more_difficult_string'
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean' #'cosmo'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///' + database_path
     app.config['SQLALCHEMY_TsRACK_MODIFICATIONS'] = False
     print(os.path.join(os.path.dirname(application_path), 'nblocker.sqlite3'))
+    
     admin = Admin(app,template_mode='bootstrap4', index_view=AnalyticsView(name='Dashboard'))
+  
+    
     global db
     db = SQLAlchemy(app)
     autocrud = AutoCrud(app, db)

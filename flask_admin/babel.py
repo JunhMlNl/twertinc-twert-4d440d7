@@ -2,7 +2,7 @@ try:
     try:
         from flask_babelex import Domain
     except ImportError:
-        from flask_babel import Domain
+        from flask_babel import Domain 
 
 except ImportError:
     def gettext(string, **variables):
@@ -39,7 +39,6 @@ else:
 
             return super(CustomDomain, self).get_translations_path(ctx)
 
-
     domain = CustomDomain()
 
     gettext = domain.gettext
@@ -62,6 +61,7 @@ else:
         def ngettext(self, singular, plural, n):
             t = wtforms_domain.get_translations()
             return t.ungettext(singular, plural, n)
+
 
 # lazy imports
 from .helpers import get_current_view
