@@ -1232,6 +1232,7 @@ class ModelView(BaseModelView):
             return False
 
         return super(ModelView, self).is_action_allowed(name)
+    
 
     @action('delete',
             lazy_gettext('Delete'),
@@ -1252,11 +1253,27 @@ class ModelView(BaseModelView):
             self.session.commit()
 
             flash(ngettext('Record was successfully deleted.',
-                           '%(count)s records were successfully deleted.',
-                           count,
-                           count=count), 'success')
+                        '%(count)s records were successfully deleted.',
+                        count,
+                        count=count), 'success')
         except Exception as ex:
             if not self.handle_view_exception(ex):
                 raise
 
             flash(gettext('Failed to delete records. %(error)s', error=str(ex)), 'error')
+
+    @action('block', 
+            lazy_gettext('Block'),
+            lazy_gettext('차단 상태를 변경합니까?'))
+    def action_block(self, ids):
+        try:
+            query = self.session.query(self.model).filter(self.model.id.in_(ids))
+            for item in query.all():
+                item.is_blocked = not item.is_blocked
+            self.session.commit()
+
+            flash('선택된 항목의 차단 상태가 변경되었습니다.', 'success')
+        except Exception as ex:
+            if not self.handle_view_exception(ex):
+                raise
+            flash(gettext('오류 발생. %(error)s', error=str(ex)), 'error')
