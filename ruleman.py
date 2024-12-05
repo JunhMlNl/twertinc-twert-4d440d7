@@ -88,7 +88,14 @@ def blockexe(): #block từ time_start -> time_end (2 cái này là string) vd: 
 def psutil_blockexe(): #block từ time_start -> time_end (2 cái này là string) vd: "18:00"
     db = sqlite3.connect('nblocker.sqlite3')
     cur = db.cursor()
-    process_rules = cur.execute("SELECT  exe_name FROM process_rules WHERE is_blocked=TRUE") 
+    process_rules = cur.execute("""
+        SELECT process_rules.exe_name
+    FROM process_rules
+    JOIN time_rules ON process_rules.time_rule_name = time_rules.name
+    WHERE process_rules.is_blocked = TRUE
+      AND time_rules.from_time <= strftime('%H:%M', 'now', 'localtime')
+      AND time_rules.to_time >= strftime('%H:%M', 'now', 'localtime')
+    """)
     process_rules_rows = process_rules.fetchall()
     
     exe_list = []
