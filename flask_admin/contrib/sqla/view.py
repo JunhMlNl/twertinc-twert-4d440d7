@@ -1262,8 +1262,8 @@ class ModelView(BaseModelView):
 
             flash(gettext('Failed to delete records. %(error)s', error=str(ex)), 'error')
 
-    @action('block', 
-            lazy_gettext('Block'),
+    @action('block reverse',
+            lazy_gettext('Block reverse'),
             lazy_gettext('차단 상태를 변경합니까?'))
     def action_block(self, ids):
         try:
